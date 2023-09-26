@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Seeker</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Job Seeker</h1>
+
+        <a href="index.html" class="btn btn-primary mb-3">Go to Home</a>
+        
+        <!-- Search Bar -->
+        <div class="form-group">
+            <input type="text" class="form-control" id="searchInput" placeholder="Search for a job...">
+        </div>
+        
+        <!-- Job Cards Container -->
+        <div class="row" id="jobCards">
+            <!-- Job cards will be added here using JavaScript -->
+        </div>
+    </div>
+
+    <!-- Include Bootstrap and Axios JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.4/axios.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <script>
+        // Function to fetch and display job data
+        function fetchJobData(searchText = "") {
+            axios.get(`http://localhost:8080/job${searchText ? `/${searchText}` : ""}`)
+                .then((response) => {
+                    const jobData = response.data;
+                    const jobCardsContainer = document.getElementById("jobCards");
+                    jobCardsContainer.innerHTML = "";
+
+                    jobData.forEach((job) => {
+                        const cardHtml = `
+                            <div class="col-md-4 mb-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${job.title}</h5>
+                                        <p class="card-text">${job.desc}</p>
+                                        <p class="card-text">Location: ${job.location}</p>
+                                        <p class="card-text">Tech: ${job.tech.join(", ")}</p>
+                                        <p class="card-text">Experience: ${job.exp} years</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        jobCardsContainer.innerHTML += cardHtml;
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error fetching job data:", error);
+                });
+        }
+
+        // Listen for input in the search bar
+        const searchInput = document.getElementById("searchInput");
+        searchInput.addEventListener("input", () => {
+            const searchText = searchInput.value;
+            fetchJobData(searchText);
+        });
+
+        // Initial data fetch (without search)
+        fetchJobData();
+    </script>
+</body>
+</html>

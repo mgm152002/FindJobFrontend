@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recruiter Form</title>
+    <!-- Include Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <h1>Recruiter Form</h1>
+                <form id="recruiterForm">
+                    <div class="form-group">
+                        <label for="title">Job Title</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="desc">Job Description</label>
+                        <textarea class="form-control" id="desc" name="desc" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" class="form-control" id="location" name="location" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tech">Technologies</label>
+                        <input type="text" class="form-control" id="tech" name="tech" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="exp">Experience (in years)</label>
+                        <input type="number" class="form-control" id="exp" name="exp" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include Bootstrap JS and jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById("recruiterForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevent the default form submission
+        submitForm(); // Call the submitForm function
+    });
+    function submitForm() {
+    const form = document.getElementById("recruiterForm");
+    const formData = new FormData(form);
+    const formObject = {};
+
+    formData.forEach((value, key) => {
+        if (key === "tech") {
+        // Split the value into an array of strings (assuming it's a comma-separated string)
+        formObject[key] = value.split(",").map(item => item.trim());
+    } else {
+        formObject[key] = value;
+    }
+       
+    });
+
+    const jsonData = JSON.stringify(formObject);
+    console.log(jsonData);
+
+    fetch("http://localhost:8080/job", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: jsonData
+    })
+    .then(response => {
+        if (response.ok) {
+            // Redirect to success.html upon successful response
+            window.location.href = "sucess.html";
+        } else {
+            throw new Error("Network response was not ok");
+        }
+    })
+    .catch(error => {
+        // Handle errors (e.g., display an error message)
+        console.error(error);
+    });
+}
+    </script>
+</body>
+</html>
